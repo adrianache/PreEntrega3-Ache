@@ -1,3 +1,5 @@
+(Update v1.1: Próxima actualización general)
+
 1-
 Eliminar una Nota:
 Permite que el usuario borre notas específicas, dando más control sobre las entradas.
