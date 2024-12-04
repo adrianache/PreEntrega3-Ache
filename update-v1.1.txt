@@ -1,0 +1,23 @@
+1-
+Eliminar una Nota:
+Permite que el usuario borre notas específicas, dando más control sobre las entradas.
+
+2-
+Guardar Notas con localStorage:
+Almacena las notas de manera persistente, de modo que se mantengan incluso después de recargar la página.
+
+3-
+Editar una Nota:
+Da la opción de modificar una nota ya guardada, mejorando la flexibilidad de la app.
+
+4-
+Agregar Fecha de Creación:
+Muestra la fecha y hora en que se creó cada nota, para dar contexto temporal a las entradas.
+
+5-
+Confirmación Antes de Eliminar:
+Solicita una confirmación antes de borrar una nota, evitando eliminaciones accidentales.
+
+6-
+Botón de "Limpiar Todo":
+Agrega un botón para borrar todas las notas de una vez, eliminando todo el contenido guardado en la aplicación.
