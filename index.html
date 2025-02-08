@@ -6,30 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App de Notas</title>
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="icon" href="./img/favicon.png" type="image/png">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
     <div class="container">
-        <h1>App de notas:</h1>
-        <button id="toggleTheme" aria-label="Cambiar tema">Tema Oscuro</button>
-        <div id="message" class="message"></div>
+        <h1>App de Notas:</h1>
+        <button id="toggleTheme" aria-label="Cambiar tema">Cambiar a Tema Oscuro</button>
+        <div id="message" class="message"></div> <!-- Contenedor para mensajes -->
         <form id="noteForm">
             <label for="studentNameInput">Nombre del alumno (opcional):</label>
-            <input type="text" id="studentNameInput" placeholder="Ej: Adrián H">
+            <input type="text" id="studentNameInput" placeholder="Ej: Juan Pérez">
             <label for="subjectInput">Asignatura (opcional):</label>
-            <input type="text" id="subjectInput" placeholder="Ej: Curso de Javascript">
+            <input type="text" id="subjectInput" placeholder="Ej: Matemáticas">
             <label for="noteInput">Nota:</label>
             <textarea id="noteInput" placeholder="Escribe tu nota aquí..." required></textarea>
-            <button type="submit">Agregar nota</button>
+            <button type="submit">Agregar Nota</button>
         </form>
-        <button id="addNoteManually" aria-label="Agregar nota manualmente">Agregar nota manualmente</button>
+        <button id="addNoteManually" aria-label="Agregar nota manualmente">Agregar Nota Manualmente</button>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Buscar notas por alumno, asignatura o texto...">
             <button id="clearSearch" aria-label="Limpiar búsqueda">×</button>
         </div>
         <div id="output" class="output"></div>
+
+        <!-- Formulario de edición (oculto por defecto) -->
+        <div id="editForm" class="edit-form">
+            <h2>Editar Nota</h2>
+            <input type="text" id="editStudentInput" placeholder="Editar alumno">
+            <input type="text" id="editSubjectInput" placeholder="Editar asignatura">
+            <textarea id="editNoteInput" placeholder="Editar nota"></textarea>
+            <button id="saveEdit">Guardar</button>
+            <button id="cancelEdit">Cancelar</button>
+        </div>
     </div>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./js/miarchivo.js"></script>
 </body>
 

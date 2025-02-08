@@ -9,39 +9,54 @@ const searchInput = document.getElementById('searchInput');
 const clearSearchButton = document.getElementById('clearSearch');
 const toggleThemeButton = document.getElementById('toggleTheme');
 const messageContainer = document.getElementById('message');
+const editForm = document.getElementById('editForm');
+const editStudentInput = document.getElementById('editStudentInput');
+const editSubjectInput = document.getElementById('editSubjectInput');
+const editNoteInput = document.getElementById('editNoteInput');
+const saveEditButton = document.getElementById('saveEdit');
+const cancelEditButton = document.getElementById('cancelEdit');
 
 // Lista para guardar las notas
 let notas = [];
+let notaEditando = null; // Índice de la nota que se está editando
 
-// Muestra mensajes al usuario
+// Mostrar mensajes con SweetAlert2
 function mostrarMensaje(mensaje, tipo = "success") {
-    messageContainer.textContent = mensaje;
-    messageContainer.className = `message ${tipo}`;
-    messageContainer.style.display = "block";
-    setTimeout(() => {
-        messageContainer.style.display = "none";
-    }, 3000); // oculta después de 3 segundos
+    Swal.fire({
+        icon: tipo,
+        text: mensaje,
+        showConfirmButton: false,
+        timer: 2000 // Cierra automáticamente después de 2 segundos
+    });
 }
 
-// Carga notas desde localStorage y sessionStorage al iniciar
+// Cargar notas desde JSON local al iniciar
 function cargarNotas() {
-    const notasLocal = localStorage.getItem('notas');
-    const notasSession = sessionStorage.getItem('notas');
-    if (notasLocal) {
-        notas = JSON.parse(notasLocal);
-    } else if (notasSession) {
-        notas = JSON.parse(notasSession);
-    }
-    mostrarNotas();
+    fetch('notas.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No se pudo cargar el archivo JSON');
+            }
+            return response.json();
+        })
+        .then(data => {
+            notas = data;
+            guardarNotas(); // Guardar en localStorage y sessionStorage
+            mostrarNotas(); // Mostrar las notas en el DOM
+        })
+        .catch(error => {
+            console.error('Error al cargar las notas:', error);
+            // No mostrar mensaje de error al usuario
+        });
 }
 
-// Guarda notas en localStorage y sessionStorage
+// Guardar notas en localStorage y sessionStorage
 function guardarNotas() {
     localStorage.setItem('notas', JSON.stringify(notas));
     sessionStorage.setItem('notas', JSON.stringify(notas));
 }
 
-// Muestra las notas en la página
+// Mostrar las notas en la página
 function mostrarNotas(filterText = "") {
     salida.innerHTML = ""; // Limpia la salida
     notas
@@ -63,35 +78,70 @@ function mostrarNotas(filterText = "") {
         });
 }
 
-// Elimina una nota
+// Eliminar una nota
 function eliminarNota(index) {
-    if (confirm("¿Estás seguro de que quieres eliminar esta nota?")) {
-        notas.splice(index, 1); // Elimina la nota del array
-        guardarNotas(); // Actualiza localStorage y sessionStorage
-        mostrarNotas(); // Actualiza la vista
-        mostrarMensaje("Nota eliminada correctamente.", "success");
-    }
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            notas.splice(index, 1); // Elimina la nota del array
+            guardarNotas(); // Actualiza localStorage y sessionStorage
+            mostrarNotas(); // Actualiza la vista
+            mostrarMensaje("Nota eliminada correctamente.", "success");
+        }
+    });
 }
 
-// Edita una nota
+// Mostrar formulario de edición
+function mostrarFormularioEdicion(index) {
+    notaEditando = index;
+    const nota = notas[index];
+    editStudentInput.value = nota.alumno || "";
+    editSubjectInput.value = nota.asignatura || "";
+    editNoteInput.value = nota.texto;
+    editForm.style.display = "block";
+}
+
+// Guardar cambios al editar una nota
+saveEditButton.addEventListener('click', () => {
+    if (notaEditando !== null) {
+        const nuevaNota = editNoteInput.value.trim();
+        const nuevoAlumno = editStudentInput.value.trim();
+        const nuevaAsignatura = editSubjectInput.value.trim();
+        if (nuevaNota) {
+            notas[notaEditando].texto = nuevaNota;
+            notas[notaEditando].alumno = nuevoAlumno || null;
+            notas[notaEditando].asignatura = nuevaAsignatura || null;
+            notas[notaEditando].fecha = new Date().toLocaleString();
+            guardarNotas();
+            mostrarNotas();
+            mostrarMensaje("Nota editada correctamente.", "success");
+            editForm.style.display = "none";
+        } else {
+            mostrarMensaje("No puedes dejar la nota vacía.", "error");
+        }
+    }
+});
+
+// Cancelar edición
+cancelEditButton.addEventListener('click', () => {
+    editForm.style.display = "none";
+    notaEditando = null;
+});
+
+// Editar una nota
 function editarNota(index) {
-    const nuevaNota = prompt("Edita tu nota:", notas[index].texto);
-    const nuevoAlumno = prompt("Edita el nombre del alumno:", notas[index].alumno || "");
-    const nuevaAsignatura = prompt("Edita la asignatura:", notas[index].asignatura || "");
-    if (nuevaNota && nuevaNota.trim()) {
-        notas[index].texto = nuevaNota.trim();
-        notas[index].alumno = nuevoAlumno.trim() || null;
-        notas[index].asignatura = nuevaAsignatura.trim() || null;
-        notas[index].fecha = new Date().toLocaleString();
-        guardarNotas();
-        mostrarNotas();
-        mostrarMensaje("Nota editada correctamente.", "success");
-    } else {
-        mostrarMensaje("No puedes dejar la nota vacía.", "error");
-    }
+    mostrarFormularioEdicion(index);
 }
 
-// Valida si una nota es duplicada
+// Validar si una nota es duplicada
 function esNotaDuplicada(texto, alumno, asignatura) {
     return notas.some(nota =>
         nota.texto === texto &&
@@ -100,7 +150,7 @@ function esNotaDuplicada(texto, alumno, asignatura) {
     );
 }
 
-// Agrega una nueva nota desde el formulario
+// Agregar una nueva nota desde el formulario
 form.addEventListener('submit', (e) => {
     e.preventDefault(); // Evita que se recargue la página
     const texto = noteInput.value.trim();
@@ -117,13 +167,32 @@ form.addEventListener('submit', (e) => {
             asignatura: asignatura || null,
             fecha: new Date().toLocaleString(),
         };
-        notas.push(nuevaNota); // Guarda la nota en el array
-        guardarNotas();
-        mostrarNotas();
-        noteInput.value = ""; // Limpia el campo de texto
-        studentNameInput.value = ""; // Limpia el campo del alumno
-        subjectInput.value = ""; // Limpia el campo de la asignatura
+        notas.push(nuevaNota); // Guardar la nota en el array
+        guardarNotas(); // Actualiza localStorage y sessionStorage
+        mostrarNotas(); // Mostrar las notas actualizadas
+        noteInput.value = ""; // Limpiar el campo de texto
+        studentNameInput.value = ""; // Limpiar el campo del alumno
+        subjectInput.value = ""; // Limpiar el campo de la asignatura
         mostrarMensaje("Nota agregada correctamente.", "success");
+    } else {
+        mostrarMensaje("No puedes agregar una nota vacía.", "error");
+    }
+});
+
+// Agregar notas manualmente
+addNoteManuallyButton.addEventListener('click', () => {
+    const notaManual = prompt("Escribe tu nota manualmente:");
+    if (notaManual && notaManual.trim()) {
+        const nuevaNota = {
+            texto: notaManual.trim(),
+            alumno: null,
+            asignatura: null,
+            fecha: new Date().toLocaleString(),
+        };
+        notas.push(nuevaNota); // Guardar la nota en el array
+        guardarNotas(); // Actualiza localStorage y sessionStorage
+        mostrarNotas(); // Mostrar las notas actualizadas
+        mostrarMensaje("Nota agregada manualmente.", "success");
     } else {
         mostrarMensaje("No puedes agregar una nota vacía.", "error");
     }
@@ -138,7 +207,7 @@ function debounce(func, wait) {
     };
 }
 
-// Busca notas con debounce
+// Buscar notas con debounce
 searchInput.addEventListener('input', debounce(() => {
     mostrarNotas(searchInput.value);
 }, 300));
@@ -149,15 +218,15 @@ clearSearchButton.addEventListener('click', () => {
     mostrarNotas();
 });
 
-// Cambia entre tema claro y oscuro
+// Cambiar entre tema claro y oscuro
 toggleThemeButton.addEventListener('click', () => {
     document.body.classList.toggle('dark-theme');
     if (document.body.classList.contains('dark-theme')) {
-        toggleThemeButton.textContent = "Tema Claro";
+        toggleThemeButton.textContent = "Cambiar a Tema Claro";
     } else {
-        toggleThemeButton.textContent = "Tema Oscuro";
+        toggleThemeButton.textContent = "Cambiar a Tema Oscuro";
     }
 });
 
-// Carga notas al iniciar la página
+// Cargar notas al iniciar la página
 window.onload = cargarNotas;

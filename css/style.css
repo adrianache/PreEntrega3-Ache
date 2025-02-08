@@ -1,4 +1,3 @@
-/* variables */
 :root {
     --color-primary: #007acc;
     --color-background: #f9f9f9;
@@ -195,6 +194,24 @@ button:hover {
 
 .note .edit-button:hover {
     background-color: #45a049;
+}
+
+.edit-form {
+    display: none; /* Oculto por defecto */
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background-color: var(--color-background);
+    box-shadow: 0 4px 6px var(--color-shadow);
+}
+
+.edit-form h2 {
+    margin-bottom: 10px;
+}
+
+.edit-form textarea {
+    min-height: 100px;
 }
 
 @media (max-width: 600px) {

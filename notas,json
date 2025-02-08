@@ -1,0 +1,14 @@
+[
+    {
+        "texto": "Primera nota de ejemplo",
+        "alumno": "Juan Pérez",
+        "asignatura": "Matemáticas",
+        "fecha": "2023-10-01"
+    },
+    {
+        "texto": "Segunda nota de ejemplo",
+        "alumno": null,
+        "asignatura": "Historia",
+        "fecha": "2023-10-02"
+    }
+]
