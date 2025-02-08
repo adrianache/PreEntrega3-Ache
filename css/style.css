@@ -197,7 +197,7 @@ button:hover {
 }
 
 .edit-form {
-    display: none; /* Oculto por defecto */
+    display: none;
     margin-top: 20px;
     padding: 20px;
     border: 1px solid var(--color-border);

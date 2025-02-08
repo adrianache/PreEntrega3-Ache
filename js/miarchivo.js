@@ -46,7 +46,6 @@ function cargarNotas() {
         })
         .catch(error => {
             console.error('Error al cargar las notas:', error);
-            // No mostrar mensaje de error al usuario
         });
 }
 
@@ -168,8 +167,8 @@ form.addEventListener('submit', (e) => {
             fecha: new Date().toLocaleString(),
         };
         notas.push(nuevaNota); // Guardar la nota en el array
-        guardarNotas(); // Actualiza localStorage y sessionStorage
-        mostrarNotas(); // Mostrar las notas actualizadas
+        guardarNotas();
+        mostrarNotas();
         noteInput.value = ""; // Limpiar el campo de texto
         studentNameInput.value = ""; // Limpiar el campo del alumno
         subjectInput.value = ""; // Limpiar el campo de la asignatura
@@ -222,9 +221,9 @@ clearSearchButton.addEventListener('click', () => {
 toggleThemeButton.addEventListener('click', () => {
     document.body.classList.toggle('dark-theme');
     if (document.body.classList.contains('dark-theme')) {
-        toggleThemeButton.textContent = "Cambiar a Tema Claro";
+        toggleThemeButton.textContent = "Tema Claro";
     } else {
-        toggleThemeButton.textContent = "Cambiar a Tema Oscuro";
+        toggleThemeButton.textContent = "Tema Oscuro";
     }
 });
 
